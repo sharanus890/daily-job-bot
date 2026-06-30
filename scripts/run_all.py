@@ -17,12 +17,12 @@ from send_email import send_digest
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  DAILY JOB BOT v6.0 - FULL PIPELINE")
+    print("  DAILY JOB BOT v7.0 - FULL PIPELINE")
     print("  Python Dev | Data Analyst | Tech Support | Cloud Computing")
-    print("  Bengaluru | Fresher (0-2 YOE)")
+    print("  Bengaluru | Fresher (0-2 YOE) | Startup & Mid-range Companies")
     print("=" * 60)
 
-    # Step 1: Scrape jobs from all 11 platforms
+    # Step 1: Scrape jobs from all 9 platforms
     print("\n[1/4] Scraping jobs from all platforms...")
     jobs_data = scrape_all_jobs()
     total_found = jobs_data.get("total_found", 0)

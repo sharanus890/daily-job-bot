@@ -21,22 +21,22 @@ TAILORED  = "tailored_resumes.json"
 SOURCE_COLORS = {
     "LinkedIn":     "#0077b5",
     "Naukri":       "#ff7555",
-    "Instahire":    "#7c3aed",
+    "Indeed":       "#2d64bc",
     "Wellfound":    "#fb6404",
     "Internshala":  "#00b4d8",
-    "TimesJobs":    "#c62828",
-    "Freshersworld":"#2e7d32",
+    "Freshersworld":"#0caa41",
     "Cutshort":     "#6c63ff",
-    "Hirist":       "#00897b",
     "Foundit":      "#d84315",
-    "Apna.co":      "#2e7d32",
     "WorkIndia":    "#f59e0b",
+    "Instahire":    "#7c3aed",
+    "Hirist":       "#00897b",
+    "Apna.co":      "#2e7d32",
     "Naukricity":   "#003a9b",
     "iimjobs":      "#0caa41",
 }
 
-PLATFORMS = ["LinkedIn","Naukri","Internshala","Wellfound","Cutshort",
-             "Hirist","Foundit","Apna.co","WorkIndia","Naukricity","iimjobs"]
+PLATFORMS = ["LinkedIn","Naukri","Indeed","Internshala","Wellfound",
+             "Cutshort","Foundit","WorkIndia","Freshersworld"]
 
 
 def load():
@@ -62,8 +62,13 @@ def ats_badge(score):
 def company_display(company, company_type):
     co = (company or "").strip()
     # Accept actual company names, filter out only truly invalid ones
-    if not co or co.lower() in ("n/a", "na", "company name n/a", "unknown", "", "confidential company"):
+    bad_names = {"n/a", "na", "company name n/a", "unknown", "", ".", "-",
+                 "confidential company", "company not disclosed", "not disclosed",
+                 "undisclosed", "confidential", "null", "none", "hiring"}
+    if not co or co.lower() in bad_names:
         co = "Company Not Disclosed"
+    # Ensure we don't have HTML artifacts in company name
+    co = co.replace("<", "&lt;").replace(">", "&gt;")
     icon  = {"MNC": "[MNC]", "Startup": "[Startup]", "Company": "[Company]"}.get(company_type, "[Company]")
     color = {"MNC": "#0d47a1", "Startup": "#4a148c", "Company": "#1b5e20"}.get(company_type, "#1b5e20")
     return f'<span style="color:{color};font-weight:900;font-size:17px">{icon} {co}</span>'
@@ -287,7 +292,7 @@ def build_html(jobs_data, tailored_data):
     <div style="display:flex;justify-content:center;gap:10px;margin-top:22px;flex-wrap:wrap">{stats}</div>
     <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.15)">
       <div style="color:rgba(255,255,255,0.5);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">
-        Searched across 11 IT job platforms
+        Searched across 9 IT job platforms
       </div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:3px">{platform_pills}</div>
     </div>
