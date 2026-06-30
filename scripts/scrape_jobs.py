@@ -116,7 +116,7 @@ def classify_co(name):
 def clean_co(name):
     """Clean company name - try harder to get actual names."""
     n = (name or "").strip()
-    bad = {"n/a","na","company name n/a","unknown","not mentioned","confidential","","-","null","none","."}
+    bad = {"n/a","na","company name n/a","unknown","not mentioned","confidential","confidential company","","-","null","none","."}
     n_lower = n.lower()
     # Remove common prefixes/suffixes
     n = re.sub(r'^(at|with|by|for)\s+', '', n, flags=re.IGNORECASE)
