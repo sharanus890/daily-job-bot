@@ -1,0 +1,13 @@
+# Generated files
+email_preview.html
+jobs_found.json
+tailored_resumes.json
+seen_jobs.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
