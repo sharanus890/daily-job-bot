@@ -373,7 +373,7 @@ def send_digest():
     print(f"  {'='*50}\n")
     jobs_data, tailored_data = load()
     html = build_html(jobs_data, tailored_data)
-    send(html, tailored_data)
+    return send(html, tailored_data)
 
 if __name__ == "__main__":
     send_digest()
