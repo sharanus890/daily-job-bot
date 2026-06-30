@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Resume Tailor - ATS keyword-based
+Resume Tailor - ATS keyword-based (Multi-Profile Edition)
 Picks top 5 ATS-scored jobs and tailors resume + cold email for each.
+Profiles: Python Developer | Data Analyst | Tech Support | Cloud Computing
 """
 
 import json, os, re
@@ -12,96 +13,113 @@ RESUME_FILE = "resume/base_resume.json"
 OUTPUT_FILE = "tailored_resumes.json"
 
 # Core resume data - reads from environment variables or uses defaults
-# Set these in GitHub Secrets to customize: CANDIDATE_NAME, CANDIDATE_PHONE,
-# CANDIDATE_LINKEDIN, CANDIDATE_GITHUB, CANDIDATE_YOE, CANDIDATE_EDUCATION
 _email = os.environ.get("GMAIL_SENDER", "your-email@gmail.com")
 
 CANDIDATE = {
     "name":     os.environ.get("CANDIDATE_NAME", "Your Name"),
-    "title":    "Java Full Stack Developer",
+    "title":    "Python Developer | Data Analyst | Tech Support | Cloud Computing",
     "email":    _email,
     "phone":    os.environ.get("CANDIDATE_PHONE", "+91 your-phone"),
     "linkedin": os.environ.get("CANDIDATE_LINKEDIN", "linkedin.com/in/your-profile"),
     "github":   os.environ.get("CANDIDATE_GITHUB", "github.com/your-username"),
     "location": "Bengaluru, India",
-    "yoe":      os.environ.get("CANDIDATE_YOE", "1 year"),
+    "yoe":      os.environ.get("CANDIDATE_YOE", "Fresher / 0-1 year"),
     "summary":  (
-        "Java Full Stack Developer with experience building "
-        "enterprise-grade Spring Boot microservices and Angular frontends. "
-        "Proficient in REST APIs, JWT security, Docker, and Angular."
+        "Versatile IT fresher skilled in Python development, data analysis, "
+        "technical support, and cloud computing. Proficient in Python, SQL, AWS, "
+        "Power BI, and Linux. Strong problem-solving abilities with hands-on "
+        "experience in real-world projects. Seeking fresher opportunities in "
+        "Bengaluru."
     ),
     "skills": {
-        "backend":  ["Java", "Spring Boot", "Spring Security", "REST APIs", "Microservices", "JPA/Hibernate", "JWT"],
-        "frontend": ["Angular", "TypeScript", "RxJS", "HTML5", "CSS3"],
-        "data":     ["PostgreSQL", "MySQL", "Redis", "MongoDB"],
-        "devops":   ["Docker", "Jenkins", "GitHub Actions", "CI/CD", "Git"],
-        "testing":  ["JUnit", "Mockito", "Swagger", "Postman"],
+        "python":     ["Python", "Django", "Flask", "FastAPI", "Pandas", "NumPy", "REST APIs"],
+        "data":       ["SQL", "MySQL", "PostgreSQL", "Power BI", "Tableau", "Excel", "Data Analysis"],
+        "cloud":      ["AWS", "Azure", "Docker", "Linux", "Git", "CI/CD"],
+        "support":    ["Technical Support", "IT Support", "Helpdesk", "Troubleshooting", "Networking"],
+        "frontend":   ["HTML", "CSS", "JavaScript", "React"],
+        "tools":      ["Git", "GitHub", "Jira", "VS Code", "Jupyter"],
     },
     "experience": [
         {
-            "company":  os.environ.get("CANDIDATE_EXP_COMPANY", "Your Company"),
-            "role":     os.environ.get("CANDIDATE_EXP_ROLE", "Software Engineer"),
-            "period":   os.environ.get("CANDIDATE_EXP_PERIOD", "Start - End"),
+            "company":  os.environ.get("CANDIDATE_EXP_COMPANY", "Project / Training Experience"),
+            "role":     os.environ.get("CANDIDATE_EXP_ROLE", "Python & Data Analysis Intern"),
+            "period":   os.environ.get("CANDIDATE_EXP_PERIOD", "Recent"),
             "bullets": [
-                "Developed scalable Java Spring Boot applications",
-                "Built RESTful APIs and microservices architecture",
-                "Implemented CI/CD pipelines using Docker and Jenkins",
+                "Built Python applications using Django/Flask frameworks",
+                "Analyzed datasets using Pandas, SQL, and created Power BI dashboards",
+                "Deployed applications on AWS cloud with Docker containers",
             ]
         }
     ],
     "projects": [
         {
-            "name": "Your Project 1",
-            "tech": "Java, Spring Boot, Angular",
-            "desc": "Description of your project",
+            "name": "Python Web Application",
+            "tech": "Python, Django, PostgreSQL",
+            "desc": "Built a full-stack web application with user authentication and CRUD operations",
         },
         {
-            "name": "Your Project 2",
-            "tech": "Java, Spring Boot, React",
-            "desc": "Description of your project",
+            "name": "Data Analysis Dashboard",
+            "tech": "Python, Pandas, Power BI, SQL",
+            "desc": "Analyzed sales data and created interactive dashboards for business insights",
+        },
+        {
+            "name": "Cloud Deployment Project",
+            "tech": "AWS, Docker, Linux, GitHub Actions",
+            "desc": "Deployed containerized applications on AWS EC2 with CI/CD pipeline",
         },
     ],
-    "education": os.environ.get("CANDIDATE_EDUCATION", "B.E. CSE - Your College (Year) - CGPA: X.XX/10"),
+    "education": os.environ.get("CANDIDATE_EDUCATION", "B.E./B.Tech - Your College (Year) - CGPA: X.XX/10"),
     "certs": [
-        "Your Certification 1",
-        "Your Certification 2",
+        "AWS Cloud Practitioner (or equivalent)",
+        "Python/Data Science Certification",
     ],
 }
 
-# Skill keyword -> resume section mapping
+# Skill keyword -> resume section mapping (Multi-Profile)
 SKILL_MAP = {
-    "java":            CANDIDATE["skills"]["backend"],
-    "spring":          CANDIDATE["skills"]["backend"],
-    "spring boot":     CANDIDATE["skills"]["backend"],
-    "spring security": CANDIDATE["skills"]["backend"],
-    "spring cloud":    CANDIDATE["skills"]["backend"],
-    "microservices":   CANDIDATE["skills"]["backend"],
-    "rest api":        CANDIDATE["skills"]["backend"],
-    "restful":         CANDIDATE["skills"]["backend"],
-    "jpa":             CANDIDATE["skills"]["backend"],
-    "hibernate":       CANDIDATE["skills"]["backend"],
-    "angular":         CANDIDATE["skills"]["frontend"],
-    "typescript":      CANDIDATE["skills"]["frontend"],
-    "rxjs":            CANDIDATE["skills"]["frontend"],
+    # Python Developer
+    "python":          CANDIDATE["skills"]["python"],
+    "django":          CANDIDATE["skills"]["python"],
+    "flask":           CANDIDATE["skills"]["python"],
+    "fastapi":         CANDIDATE["skills"]["python"],
+    # Data Analyst
+    "data analyst":    CANDIDATE["skills"]["data"],
+    "data analysis":   CANDIDATE["skills"]["data"],
+    "data analytics":  CANDIDATE["skills"]["data"],
+    "business analyst":CANDIDATE["skills"]["data"],
+    "power bi":        CANDIDATE["skills"]["data"],
+    "tableau":         CANDIDATE["skills"]["data"],
+    "sql":             CANDIDATE["skills"]["data"],
+    "mysql":           CANDIDATE["skills"]["data"],
+    "postgresql":      CANDIDATE["skills"]["data"],
+    "pandas":          CANDIDATE["skills"]["python"],
+    "excel":           CANDIDATE["skills"]["data"],
+    # Cloud Computing
+    "aws":             CANDIDATE["skills"]["cloud"],
+    "azure":           CANDIDATE["skills"]["cloud"],
+    "cloud":           CANDIDATE["skills"]["cloud"],
+    "devops":          CANDIDATE["skills"]["cloud"],
+    "docker":          CANDIDATE["skills"]["cloud"],
+    "kubernetes":      CANDIDATE["skills"]["cloud"],
+    "linux":           CANDIDATE["skills"]["cloud"],
+    "terraform":       CANDIDATE["skills"]["cloud"],
+    # Tech Support
+    "technical support": CANDIDATE["skills"]["support"],
+    "tech support":    CANDIDATE["skills"]["support"],
+    "it support":      CANDIDATE["skills"]["support"],
+    "helpdesk":        CANDIDATE["skills"]["support"],
+    "troubleshooting": CANDIDATE["skills"]["support"],
+    "networking":      CANDIDATE["skills"]["support"],
+    # Common
+    "git":             CANDIDATE["skills"]["tools"],
+    "github":          CANDIDATE["skills"]["tools"],
+    "api":             CANDIDATE["skills"]["python"],
+    "rest api":        CANDIDATE["skills"]["python"],
+    "agile":           ["Agile", "JIRA", "Scrum"],
+    "jira":            ["JIRA", "Agile", "Scrum"],
     "html":            CANDIDATE["skills"]["frontend"],
     "css":             CANDIDATE["skills"]["frontend"],
-    "websocket":       CANDIDATE["skills"]["frontend"],
-    "kafka":           CANDIDATE["skills"]["data"],
-    "redis":           CANDIDATE["skills"]["data"],
-    "postgresql":      CANDIDATE["skills"]["data"],
-    "sql":             CANDIDATE["skills"]["data"],
-    "docker":          CANDIDATE["skills"]["devops"],
-    "jenkins":         CANDIDATE["skills"]["devops"],
-    "ci/cd":           CANDIDATE["skills"]["devops"],
-    "git":             CANDIDATE["skills"]["devops"],
-    "github actions":  CANDIDATE["skills"]["devops"],
-    "junit":           CANDIDATE["skills"]["testing"],
-    "mockito":         CANDIDATE["skills"]["testing"],
-    "swagger":         CANDIDATE["skills"]["testing"],
-    "postman":         CANDIDATE["skills"]["testing"],
-    "jwt":             CANDIDATE["skills"]["backend"],
-    "agile":           ["Agile (JIRA, Scrum, Sprint planning)"],
-    "jira":            ["JIRA", "Agile", "Sprint planning"],
+    "javascript":      CANDIDATE["skills"]["frontend"],
 }
 
 
@@ -117,17 +135,17 @@ def extract_jd_skills(job):
 
 def cold_email(job, matched_skills):
     company = (job.get("company","") or "").strip()
-    if not company or company.lower() in ("n/a","na","confidential company",""):
+    if not company or company.lower() in ("n/a","na","company not disclosed","confidential company",""):
         company = "your company"
     title   = job.get("title", "Software Developer")
-    skills_line = ", ".join(matched_skills[:5]) if matched_skills else "Java, Spring Boot, Angular"
+    skills_line = ", ".join(matched_skills[:5]) if matched_skills else "Python, SQL, AWS, Data Analysis"
     return {
-        "email_subject": f"Application: {title} | {CANDIDATE['name']} | Java Full Stack | {CANDIDATE['yoe']} | Bengaluru",
+        "email_subject": f"Application: {title} | {CANDIDATE['name']} | Fresher | Bengaluru",
         "email_body": (
             f"Hi Hiring Team,\n\n"
             f"I am excited to apply for the {title} role at {company}.\n\n"
-            f"I am a Java Full Stack Developer with {CANDIDATE['yoe']} of experience, "
-            f"skilled in building Spring Boot microservices and Angular applications.\n\n"
+            f"I am a motivated IT fresher with skills in Python development, data analysis, "
+            f"technical support, and cloud computing.\n\n"
             f"Key skills matching your requirement: {skills_line}.\n\n"
             f"I would love to discuss how I can contribute to {company}. "
             f"My resume is attached below.\n\n"
@@ -142,7 +160,7 @@ def cold_email(job, matched_skills):
 def build_resume_html(job, matched_skills):
     """Generate a clean HTML resume tailored for this job."""
     company = (job.get("company","") or "Hiring Company").strip()
-    if company.lower() in ("n/a","na","confidential company",""):
+    if company.lower() in ("n/a","na","company not disclosed","confidential company",""):
         company = "Hiring Company"
     title = job.get("title","Software Developer")
 
@@ -175,7 +193,7 @@ def build_resume_html(job, matched_skills):
   <div style="border-bottom:3px solid #1565c0;padding-bottom:16px;margin-bottom:20px">
     <h1 style="margin:0;color:#1565c0;font-size:26px">{CANDIDATE['name'].upper()}</h1>
     <div style="color:#546e7a;font-size:14px;margin-top:4px">
-      {CANDIDATE['title']} - {CANDIDATE['yoe']} Experience - {CANDIDATE['location']}
+      {CANDIDATE['title']} - {CANDIDATE['yoe']} - {CANDIDATE['location']}
     </div>
     <div style="font-size:12px;margin-top:6px;color:#37474f">
       {CANDIDATE['email']} | {CANDIDATE['phone']} |
@@ -224,6 +242,7 @@ def build_resume_html(job, matched_skills):
 def tailor_all():
     print(f"\n{'='*55}")
     print(f"  RESUME TAILOR - {datetime.now().strftime('%d %b %Y %I:%M %p')}")
+    print(f"  Multi-Profile: Python | Data Analyst | Tech Support | Cloud")
     print(f"{'='*55}\n")
 
     if not os.path.exists(JOBS_FILE):
@@ -246,7 +265,7 @@ def tailor_all():
         rhtml   = build_resume_html(job, matched)
         score   = job.get("ats_score", 0)
         print(f"  [{i+1}] {job.get('title','')} @ "
-              f"{job.get('company','Confidential')[:25]} - ATS: {score}% - "
+              f"{job.get('company','Company Not Disclosed')[:25]} - ATS: {score}% - "
               f"{len(matched)} skills matched")
         results.append({
             "job":         job,

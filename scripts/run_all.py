@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Daily Job Bot - Main Orchestrator
-Runs the full pipeline: scrape -> filter duplicates -> tailor resumes -> send email
+Runs the full pipeline: scrape -> filter duplicates -> send email
+Profiles: Python Developer | Data Analyst | Tech Support | Cloud Computing
 """
 import sys
 import os
@@ -16,8 +17,9 @@ from send_email import send_digest
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  DAILY JOB BOT v5.0 - FULL PIPELINE")
-    print("  Java Full Stack | Bengaluru | 0-2 YOE")
+    print("  DAILY JOB BOT v6.0 - FULL PIPELINE")
+    print("  Python Dev | Data Analyst | Tech Support | Cloud Computing")
+    print("  Bengaluru | Fresher (0-2 YOE)")
     print("=" * 60)
 
     # Step 1: Scrape jobs from all 11 platforms

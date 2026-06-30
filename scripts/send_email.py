@@ -2,6 +2,7 @@
 """
 Daily Job Digest Email - Professional UI
 Sends beautiful HTML email with job listings
+Profiles: Python Developer | Data Analyst | Tech Support | Cloud Computing
 """
 
 import json, os, smtplib
@@ -60,8 +61,9 @@ def ats_badge(score):
 
 def company_display(company, company_type):
     co = (company or "").strip()
-    if not co or co.lower() in ("n/a", "na", "company name n/a", "unknown", ""):
-        co = "Confidential Company"
+    # Accept actual company names, filter out only truly invalid ones
+    if not co or co.lower() in ("n/a", "na", "company name n/a", "unknown", "", "confidential company"):
+        co = "Company Not Disclosed"
     icon  = {"MNC": "[MNC]", "Startup": "[Startup]", "Company": "[Company]"}.get(company_type, "[Company]")
     color = {"MNC": "#0d47a1", "Startup": "#4a148c", "Company": "#1b5e20"}.get(company_type, "#1b5e20")
     return f'<span style="color:{color};font-weight:900;font-size:17px">{icon} {co}</span>'
@@ -157,8 +159,9 @@ def ai_section(items):
         t   = item.get("tailored", {})
         ct  = job.get("company_type","")
         src_col = SOURCE_COLORS.get(job.get("source",""), "#546e7a")
-        co  = (job.get("company","") or "").strip() or "Confidential Company"
-        if co.lower() in ("n/a","na","company name n/a",""): co = "Confidential Company"
+        co  = (job.get("company","") or "").strip() or "Company Not Disclosed"
+        if co.lower() in ("n/a","na","company name n/a","","confidential company"):
+            co = "Company Not Disclosed"
         icon = "[MNC]" if ct=="MNC" else ("[Startup]" if ct=="Startup" else "[Company]")
         score_html = ats_badge(job.get("ats_score",0))
         pills = "".join(
@@ -257,7 +260,7 @@ def build_html(jobs_data, tailored_data):
     <tr><td width="28" style="vertical-align:top;padding-bottom:8px">
       <div style="background:#1565c0;color:white;width:22px;height:22px;border-radius:50%;text-align:center;font-size:11px;font-weight:800;line-height:22px">3</div>
     </td><td style="padding-bottom:8px;padding-left:8px;font-size:12px;color:#37474f">
-      Cold email: <em style="color:#1565c0">Java Full Stack Dev | Spring Boot + Angular | Bengaluru</em>
+      Cold email: <em style="color:#1565c0">Python | Data Analyst | Tech Support | Cloud Computing | Bengaluru Fresher</em>
     </td></tr>
     <tr><td width="28" style="vertical-align:top">
       <div style="background:#1565c0;color:white;width:22px;height:22px;border-radius:50%;text-align:center;font-size:11px;font-weight:800;line-height:22px">4</div>
@@ -279,7 +282,7 @@ def build_html(jobs_data, tailored_data):
     <div style="color:white;font-size:27px;font-weight:900">Good Morning!</div>
     <div style="color:rgba(255,255,255,0.65);font-size:13px;margin-top:5px">{today} &nbsp;*&nbsp; Your Daily IT Job Digest</div>
     <div style="margin-top:6px;color:rgba(255,255,255,0.5);font-size:10px">
-      ATS-matched vs your Java Full Stack resume &nbsp;*&nbsp; Bengaluru only &nbsp;*&nbsp; 0-2 YOE &nbsp;*&nbsp; IT roles only
+      ATS-matched vs your profile &nbsp;*&nbsp; Bengaluru only &nbsp;*&nbsp; 0-2 YOE &nbsp;*&nbsp; Python | Data Analyst | Tech Support | Cloud
     </div>
     <div style="display:flex;justify-content:center;gap:10px;margin-top:22px;flex-wrap:wrap">{stats}</div>
     <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.15)">
@@ -294,9 +297,9 @@ def build_html(jobs_data, tailored_data):
   <div style="text-align:center;padding:8px 0 16px">
     <div style="display:inline-block;background:linear-gradient(135deg,#1a237e,#1565c0);
                 border-radius:24px;padding:12px 28px">
-      <div style="color:white;font-size:12px;font-weight:800">DAILY JOB BOT v3.0</div>
+      <div style="color:white;font-size:12px;font-weight:800">DAILY JOB BOT v6.0</div>
       <div style="color:rgba(255,255,255,0.65);font-size:10px;margin-top:3px">
-        Every day 8:00 AM IST - Java Full Stack - Bengaluru - ATS-filtered
+        Every day 8:00 AM IST - Python | Data Analyst | Tech Support | Cloud - Bengaluru - ATS-filtered
       </div>
     </div>
   </div>
@@ -306,7 +309,7 @@ def build_html(jobs_data, tailored_data):
 
 def send(html, tailored_data):
     today = datetime.now().strftime("%d %b %Y")
-    subj  = f"{today} - IT Jobs Bengaluru | Java Full Stack | ATS-Filtered"
+    subj  = f"{today} - IT Jobs Bengaluru | Python | Data Analyst | Tech Support | Cloud | ATS-Filtered"
     msg   = MIMEMultipart("mixed")
     msg["Subject"] = subj
     msg["From"]    = SENDER
@@ -317,7 +320,7 @@ def send(html, tailored_data):
         job   = item.get("job", {})
         rhtml = item.get("resume_html", "")
         co    = (job.get("company","") or "Co").replace(" ","_").replace("/","_")[:12]
-        if co.lower() in ("n/a","na","company_name_n/a",""): co = "Confidential"
+        if co.lower() in ("n/a","na","company_name_n/a","","confidential"): co = "Company"
         tl    = job.get("title","Role").replace(" ","_").replace("/","_")[:18]
         fname = f"Resume_{i+1}_{co}_{tl}.html"
         part  = MIMEBase("text","html")
